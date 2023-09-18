@@ -6,11 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSONify</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .-z {
-            z-index: -1;
-        }
-    </style>
+
 </head>
 
 <body onload="createTwoInput()">
@@ -29,7 +25,7 @@
                     class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Your input..."></textarea>
             </div>
-            <div class="w-1/2 relative -z">
+            <div class="w-1/2 relative">
                 <p class="mb-2">Output</p>
                 <button onclick="copy()" class="absolute right-0 bg-gray-400 px-2 py-[1px]">Copy</button>
                 <textarea readonly id="output" rows="35"
