@@ -6,6 +6,20 @@ fetch('header.html')
     .then(response => response.text())
     .then(headerHtml => {
         document.getElementById('header-container').innerHTML = headerHtml;
+        // Get the current page URL
+        var currentURL = window.location.href;
+
+        // Get all the navigation links
+        var navLinks = document.querySelectorAll('.link-a');
+
+        // Loop through the links and add the "active" class to the matching link
+        navLinks.forEach(function (link) {
+            if (link.href === currentURL) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active'); // Remove the class from other links
+            }
+        });
     });
 
 
@@ -163,6 +177,8 @@ function downloadJSON() {
     document.body.removeChild(a);
 
 }
+
+
 
 
 
