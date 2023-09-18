@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My JSON App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .container-1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+        }
+
+        .json-container {
+            margin-left: 5%;
+            /* max-height: 60vh;
+            overflow-y: auto; */
+            width: 100%;
+            text-align: left;
+        }
+
+        .mismatch {
+            color: red;
+        }
+    </style>
+
+</head>
+
+<body onload="compare()">
+    <!-- Navbar -->
+    <div id="header-container" class="h-24"></div>
+
+    <div class="text-center">
+        <div class="container-1">
+            <div class="json-container" id="json1Container">
+                <h2 class="text-center m-4">JSON 1</h2>
+                <pre id="json1Output"></pre>
+            </div>
+            <div class="json-container" id="json2Container">
+                <h2 class="text-center m-4">JSON 1</h2>
+                <pre id="json2Output"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="./index.js"></script>
+    <script>
+        const colors = ['bg-red-900', 'bg-blue-900']
+        function compareJSON(jsonStr1, jsonStr2, ind) {
+            const obj1 = JSON.parse(jsonStr1);
+            const obj2 = JSON.parse(jsonStr2);
+            const result = {};
+            for (const key in obj1) {
+                if (obj1.hasOwnProperty(key)) {
+                    // if (obj2.hasOwnProperty(key)) {
+                    if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
+                        result[key] = compareJSON(JSON.stringify(obj1[key]), JSON.stringify(obj2[key]), ind)
+                    } else {
+                        result[key] = obj1[key] === obj2[key] ? obj1[key] : `<span class="${colors[ind]} px-2 py-[1px] text-white">${obj1[key]}</span>`;
+                    }
+                    // }
+                }
+            }
+            return result;
+        }
+
+        function renderNestedJSON(obj, indent = 0) {
+            let html = '{<div></div>';
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key];
+                    const indentation = ' '.repeat(indent * 2); // Adjust the indentation size as needed
+                    html += `${indentation}<span class="px-6">${key}: `;
+                    if (typeof value === 'object') {
+                        html += `<div class="pl-6">${renderNestedJSON(value, indent + 1)}</div>`;
+                    } else {
+                        html += `${value},</span><br />`;
+                    }
+                }
+            }
+            return html += "},<div></div>";
+        }
+
+        function compare() {
+            const jsonStr1 = sessionStorage.getItem("json1");
+            const jsonStr2 = sessionStorage.getItem("json2");
+
+            const comparedJSON = compareJSON(jsonStr1, jsonStr2, 0);
+            const comparedSecondJSON = compareJSON(jsonStr2, jsonStr1, 1);
+            const renderedJSON = renderNestedJSON(comparedJSON);
+            const renderedSecondJSON = renderNestedJSON(comparedSecondJSON);
+
+            document.getElementById('json1Output').innerHTML = `<p>${renderedJSON}</p>`;
+            document.getElementById('json2Output').innerHTML = `<p>${renderedSecondJSON}</p>`;
+
+        }
+
+    </script>
+</body>
+
+</html>

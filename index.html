@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PV App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body onload="createTwoInput()">
+    <!-- Navbar -->
+    <div id="header-container" class="h-24"></div>
+
+    <div class="text-center mx-2">
+        <div class="flex w-full justify-end pr-4">
+            <button onclick="compareFile();"
+                class="inline-block text-sm px-4 py-2 leading-none border rounded text-black border-black hover:border hover:text-teal-500 hover:bg-white mt-2 lg:mt-0">Compare</a>
+        </div>
+        <div class="flex justify-center items-start">
+            <div class="w-1/2 mr-4">
+                <p class="mb-2">Input</p>
+                <textarea ondrop="printTheJSONInPrettyFormat()" id="input" rows="35"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Your input..."></textarea>
+            </div>
+            <div class="w-1/2 relative">
+                <p class="mb-2">Output</p>
+                <button onclick="copy()" class="absolute right-0 bg-gray-400 px-2 py-[1px]">Copy</button>
+                <textarea readonly id="output" rows="35"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Your output..."></textarea>
+            </div>
+        </div>
+        <div class="my-4">
+            <button onclick="process()"
+                class="bg-green-300 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                <span>Generate</span>
+            </button>
+            <button onclick="minify()"
+                class="bg-yellow-300 hover:bg-yellow-400 text-yellow-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                <span>Minify Output</span>
+            </button>
+        </div>
+
+        <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-1 shadow-md absolute right-0 mr-4 z-100 text-center transition-all duration-100 
+        ease-out hidden" role="alert" id="toast">
+            <div class="flex items-center">
+                <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path
+                            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+                    </svg></div>
+                <div>
+                    <p class="font-bold">Copied</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-center">
+        <div id="app" class="flex flex-col items-center">
+            <!-- Dynamic input fields will be added here -->
+
+
+        </div>
+        <div class="text-center my-2 ml-4">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onclick="addInput()">Add
+                Input</button>
+            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onclick="removeInput()">Remove
+                Input</button>
+            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onclick="saveChoice()">Save Choice
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // function saveChoice() {
+        //     const inputFields = document.querySelectorAll('#key-input');
+        //     const inputFieldsAppendValue = document.querySelectorAll('#append-input');
+        //     const dropdown = document.querySelectorAll('#dynamic-dropdown');
+
+        //     inputFields.forEach((inputField, index) => {
+        //         inputFields[index].setAttribute('value', inputFields[index].value)
+        //         inputFieldsAppendValue[index].setAttribute('value', inputFieldsAppendValue[index].value)
+
+        //         debugger
+        //         const optionToSelect = dropdown[index].querySelector(`option[value="${dropdown[index].value}"]`);
+        //         if (optionToSelect) {
+        //             optionToSelect.selected = true;
+        //         }
+
+
+
+        //     });
+
+        //     const htmlContent = document.getElementById('app').innerHTML;
+        //     localStorage.setItem('saveChoice', htmlContent);
+        // }
+
+        // function getChoice() {
+        //     const savedHtml = localStorage.getItem('saveChoice');
+        //     console.log(savedHtml, 'savedData')
+
+        //     const displayElement = document.getElementById('app');
+        //     if (savedHtml) {
+        //         displayElement.innerHTML = savedHtml;
+        //     }
+        // }
+    </script>
+
+    <script src="./process.js"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My JSON App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .container-1 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+        }
+
+        .json-container {
+            margin-left: 5%;
+            /* max-height: 60vh;
+            overflow-y: auto; */
+            width: 100%;
+            text-align: left;
+        }
+
+        .mismatch {
+            color: red;
+        }
+    </style>
+
+</head>
+
+<body onload="">
+    <!-- Navbar -->
+    <div id="header-container" class="h-24"></div>
+
+    <div class="text-center">
+        <div class="container-1">
+            <div class="json-container" id="json1Container">
+                <h2 class="text-center m-4">JSON 1</h2>
+                <pre id="json1Output"></pre>
+            </div>
+            <div class="json-container" id="json2Container">
+                <h2 class="text-center m-4">JSON 1</h2>
+                <pre id="json2Output"></pre>
+            </div>
+        </div>
+        <div class="flex justify-center items-start m-4">
+            <div class="w-1/2 mr-4">
+                <p class="mb-2">Input</p>
+                <textarea id="compare-input" rows="35"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Your input..."></textarea>
+            </div>
+            <div class="w-1/2 relative">
+                <p class="mb-2">Output</p>
+                <button onclick="copy()" class="absolute right-0 bg-gray-400 px-2 py-[1px]">Copy</button>
+                <textarea id="compare-output" rows="35"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Your output..."></textarea>
+            </div>
+        </div>
+        <div>
+            <button onclick="test()"
+                class="bg-green-300 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                <span>Compare</span>
+            </button>
+        </div>
+
+        <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-1 shadow-md absolute right-0 mr-4 z-100 text-center transition-all duration-100 
+        ease-out hidden" role="alert" id="toast">
+            <div class="flex items-center">
+                <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                        <path
+                            d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+                    </svg></div>
+                <div>
+                    <p class="font-bold">Copied</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./index.js"></script>
+    <script>
+        const colors = ['bg-red-900', 'bg-blue-900']
+        function compareJSON(jsonStr1, jsonStr2, ind) {
+            const obj1 = JSON.parse(jsonStr1);
+            const obj2 = JSON.parse(jsonStr2);
+            const result = {};
+            for (const key in obj1) {
+                if (obj1.hasOwnProperty(key)) {
+                    // if (obj2.hasOwnProperty(key)) {
+                    if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
+                        result[key] = compareJSON(JSON.stringify(obj1[key]), JSON.stringify(obj2[key]), ind)
+                    } else {
+                        result[key] = obj1[key] === obj2[key] ? obj1[key] : `<span class="${colors[ind]} px-2 py-[1px] text-white">${obj1[key]}</span>`;
+                    }
+                    // }
+                }
+            }
+            return result;
+        }
+
+        function renderNestedJSON(obj, indent = 0) {
+            let html = '{<div></div>';
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key];
+                    const indentation = ' '.repeat(indent * 2); // Adjust the indentation size as needed
+                    html += `${indentation}<span class="px-6">${key}: `;
+                    if (typeof value === 'object') {
+                        html += `<div class="pl-6">${renderNestedJSON(value, indent + 1)}</div>`;
+                    } else {
+                        html += `${value},</span><br />`;
+                    }
+                }
+            }
+            return html += "},<div></div>";
+        }
+
+        function test() {
+            const jsonStr1 = document.getElementById("compare-input").value;
+            const jsonStr2 = document.getElementById("compare-output").value;
+
+            const comparedJSON = compareJSON(jsonStr1, jsonStr2, 0);
+            const comparedSecondJSON = compareJSON(jsonStr2, jsonStr1, 1);
+            const renderedJSON = renderNestedJSON(comparedJSON);
+            const renderedSecondJSON = renderNestedJSON(comparedSecondJSON);
+
+            document.getElementById('json1Output').innerHTML = `<p>${renderedJSON}</p>`;
+            document.getElementById('json2Output').innerHTML = `<p>${renderedSecondJSON}</p>`;
+
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>
