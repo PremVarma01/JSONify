@@ -11,6 +11,16 @@ fetch('header.html')
 
         // Get all the navigation links
         var navLinks = document.querySelectorAll('.link-a');
+        var commonBtn = document.getElementById('commonDownload');
+        var markdownBtn = document.getElementById('markdownDownload');
+
+        if (currentURL.includes('markdown.html')) {
+            commonBtn.classList.add("hidden")
+            markdownBtn.classList.remove("hidden")
+        } else {
+            commonBtn.classList.remove("hidden")
+            markdownBtn.classList.add("hidden")
+        }
 
         // Loop through the links and add the "active" class to the matching link
         navLinks.forEach(function (link) {
@@ -67,7 +77,7 @@ textarea.addEventListener('input', function () {
 
 
 function copy() {
-    var copyText = document.getElementById("output") ?? document.getElementById("compare-output");
+    var copyText = document.getElementById("output") ?? document.getElementById("compare-output") ?? document.getElementById("markdown-input");
     copyText.select();
     copyText.setSelectionRange(0, 99999); // For mobile devices
     navigator.clipboard.writeText(copyText.value);

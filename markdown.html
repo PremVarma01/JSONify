@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONify</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer base {
+            ul, ol {
+                list-style: revert;
+            }
+        }
+    </style>
+    <style>
+        .container-mark {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            height: 100vh;
+        }
+
+        .editor,
+        .preview {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .editor textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+        }
+
+        .preview {
+            background-color: #f5f5f5;
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 2rem !important;
+            font-weight: bold !important;
+            margin-top: 1.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        h2 {
+            font-size: 1.5rem !important;
+            font-weight: bold !important;
+            margin-top: 1.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        h3 {
+            font-size: 1.2rem !important;
+            font-weight: bold !important;
+            margin-top: 1.2rem !important;
+            margin-bottom: 0.8rem !important;
+        }
+
+        /* Paragraphs */
+        p {
+            font-size: 1rem !important;
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        li {
+            display: list-item !important;
+            font-size: 1rem !important;
+            margin-left: 2rem !important;
+            margin-bottom: 0.2rem !important;
+        }
+
+        /* Links */
+        blockquote {
+            display: block !important;
+            margin-block-start: 1em !important;
+            margin-block-end: 1em !important;
+            margin-inline-start: 40px !important;
+            margin-inline-end: 40px !important;
+        }
+
+        .preview a {
+            color: #008CBA !important;
+            line-height: inherit !important;
+            text-decoration: none !important;
+        }
+
+        .preview a:hover {
+            color: #0056b3 !important;
+        }
+
+
+        code {
+            background-color: #f8f8f8 !important;
+            border-color: #dfdfdf !important;
+            border-style: solid !important;
+            border-width: 1px !important;
+            color: #333 !important;
+            font-family: Consolas, "Liberation Mono", Courier, monospace !important;
+            font-weight: normal !important;
+            /* padding: 0.125rem 0.3125rem 0.0625rem !important; */
+        }
+
+        pre {
+            white-space: pre-wrap !important;
+            white-space: -moz-pre-wrap !important;
+            white-space: -pre-wrap !important;
+            white-space: -o-pre-wrap !important;
+            word-wrap: break-word !important;
+            background-color: #f8f8f8 !important;
+            border: 1px solid #dfdfdf !important;
+            margin-top: 1.5em !important;
+            margin-bottom: 1.5em !important;
+            padding: 0.125rem 0.3125rem 0.0625rem !important;
+            width: 100% !important;
+        }
+
+        pre code {
+            background-color: transparent !important;
+            border: none !important;
+            padding: none !important;
+        }
+    </style>
+</head>
+
+<body onload="loadInitialMd();">
+    <!-- Navbar -->
+    <div id="header-container" class="h-24"></div>
+
+    <div class="flex justify-center items-start m-4 relative">
+        <div class="w-1/2 mr-4">
+            <textarea id="markdown-input"
+                class="h-[85vh] block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Your input..."></textarea>
+        </div>
+        <div class="w-1/2 text-left border-[1px] h-[85vh] overflow-auto">
+            <button onclick="copy()" class="absolute right-0 bg-gray-400 px-2 py-[1px]">Copy</button>
+            <div id="markdown-preview" class="preview" placeholder="Your output...">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-1 shadow-md fixed bottom-10 right-0 mr-4 z-100 text-center transition-all duration-100 
+        ease-out hidden" role="alert" id="toast">
+        <div class="flex items-center">
+            <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20">
+                    <path
+                        d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z" />
+                </svg></div>
+            <div>
+                <p class="font-bold">Copied</p>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.3/marked.min.js"></script>
+
+    <script>
+        // Get references to the editor and preview elements
+        const markdownInput = document.getElementById("markdown-input");
+        const markdownPreview = document.getElementById("markdown-preview");
+
+        // Function to update the preview
+        function updatePreview() {
+            const markdownText = markdownInput.value;
+            const htmlText = marked(markdownText); // Using the 'marked' library for Markdown to HTML conversion
+            markdownPreview.innerHTML = htmlText;
+        }
+        markdownInput.addEventListener("input", updatePreview);
+        updatePreview();
+
+        function downloadHandler() {
+            const dropdown = document.getElementById('markdown-dropdown');
+            if (dropdown.value === 'pdf') {
+                downloadPDF();
+            } else {
+                downloadMarkdown();
+            }
+        }
+
+
+        function downloadPDF() {
+            const markdownPreview = document.getElementById("markdown-preview");
+            var opt = {
+                filename: 'myfile.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // New Promise-based usage:
+            html2pdf().set(opt).from(markdownPreview).save();
+        }
+
+        // Function to download the Markdown content
+        function downloadMarkdown() {
+            const markdownText = markdownInput.value;
+            const blob = new Blob([markdownText], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+
+            // Create a hidden link and trigger the download
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'myProjectPreview.md';
+            document.body.appendChild(a);
+            a.click();
+
+            // Clean up
+            window.URL.revokeObjectURL(url);
+        }
+
+
+        function loadInitialMd() {
+            const initlialMd = `![Priceline][sd-logo]
+
+Convert your markup into live viewable html page and you can download and use them later on whenever you want with any markup editor. 
+# Installation
+## Download
+You can download the latest release tarball directly from [releases][releases]
+ ## Bower
+      bower install priceline
+ ## npm (server-side)
+        npm install priceline
+## CDN
+You can also use one of several CDNs available: 
+  * rawgit CDN
+         https://cdn.rawgit.com/pricelinejs/priceline/<version tag>/dist/priceline.min.js
+ * cdnjs
+        https://cdnjs.cloudflare.com/ajax/libs/priceline/<version tag>/priceline.min.js
+
+[sd-logo]: https://s1.pclncdn.com/design-assets/gns/priceline.svg
+[releases]: https://priceline.com
+`;
+            markdownInput.value = initlialMd;
+            updatePreview()
+        }
+
+    </script>
+    <script src="./index.js"></script>
+
+</body>
+
+</html>
