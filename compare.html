@@ -94,7 +94,7 @@
                     if (typeof obj1[key] === "object" && typeof obj2[key] === "object") {
                         result[key] = compareJSON(JSON.stringify(obj1[key]), JSON.stringify(obj2[key]), ind)
                     } else {
-                        result[key] = obj1[key] === obj2[key] ? obj1[key] : `<span class="${colors[ind]} px-2 py-[1px] text-white">${obj1[key]}</span>`;
+                        result[key] = obj1[key] === obj2[key] ? typeof obj1[key] === "string" ? `"${obj1[key]}"` : obj1[key] : `<span class="${colors[ind]} px-2 py-[1px] text-white">${typeof obj1[key] === "string" ? `"${obj1[key]}"` : obj1[key]}</span>`;
                     }
                     // }
                 }
@@ -108,7 +108,7 @@
                 if (obj.hasOwnProperty(key)) {
                     const value = obj[key];
                     const indentation = ' '.repeat(indent * 2); // Adjust the indentation size as needed
-                    html += `${indentation}<span class="px-6">${key}: `;
+                    html += `${indentation}<span class="px-6">"${key}": `;
                     if (typeof value === 'object') {
                         html += `<div class="pl-6">${renderNestedJSON(value, indent + 1)}</div>`;
                     } else {
