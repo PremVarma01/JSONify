@@ -45,6 +45,32 @@ function printTheJSONInPrettyFormat(content = undefined) {
     }
 }
 
+function validateJSON() {
+    var badJSON = document.getElementById('input').value;
+    var message = document.getElementById('toast-message');
+    var toast = document.getElementById('toast');
+    try {
+        debugger
+        var parseJSON = JSON.parse(badJSON);
+        var JSONInPrettyFormat = JSON.stringify(parseJSON, undefined, 4);
+        document.getElementById('input').value =
+            JSONInPrettyFormat;
+        message.innerHTML = "Hurray! This JSON is Valid."
+        toast.classList.remove('bg-red-300', 'border-red-600', 'text-red-900');
+        toast.classList.add('bg-green-300', 'border-green-600', 'text-green-900')
+        showToast(5000);
+    } catch (e) {
+        console.debug('Invalid JSON:', e.toString());
+        message.innerHTML = `Oops ! This JSON is Invalid. <br />${e.toString()}`
+        toast.classList.add('bg-red-300', 'border-red-600', 'text-red-900');
+        toast.classList.remove('bg-green-300', 'border-green-600', 'text-green-900')
+        showToast(5000);
+    }
+}
+
+
+
+
 
 // function hideToast() {
 //     var toast = document.getElementById("toast")
@@ -52,14 +78,14 @@ function printTheJSONInPrettyFormat(content = undefined) {
 //     toast.classList.add("invisible")
 // }
 
-function showToast() {
+function showToast(duration = 2000) {
     var toast = document.getElementById("toast")
     toast.classList.toggle("hidden");
 
     const clearToast = setTimeout(() => {
         toast.classList.toggle("hidden");
         clearTimeout(clearToast)
-    }, 2000)
+    }, duration)
 
 
 }

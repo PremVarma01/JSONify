@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSONify</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body onload="">
+    <!-- Navbar -->
+    <div id="header-container" class="h-24"></div>
+
+    <div class="text-center mx-2">
+        <div class="flex justify-center items-start">
+            <div class="w-1/2 mr-4">
+                <p class="mb-2">Input</p>
+                <textarea id="input" rows="40"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Your input..."></textarea>
+            </div>
+        </div>
+        <div class="my-4">
+            <button onclick="validateJSON();"
+                class="bg-green-300 hover:bg-green-400 text-green-800 font-bold py-2 px-4 rounded inline-flex items-center">
+                <span>Validate</span>
+            </button>
+        </div>
+
+        <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-1 shadow-md fixed bottom-10 right-0 mr-4 z-100 text-center transition-all duration-100 
+        ease-out hidden" role="alert" id="toast">
+            <div class="flex items-center">
+                <p class="font-bold" id="toast-message"></p>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script src="./index.js"></script>
+</body>
+
+</html>
