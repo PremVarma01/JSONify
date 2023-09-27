@@ -103,11 +103,11 @@ function appendTextToKey(obj, keyToFind, textToAppend, append) {
 function process() {
     const inputFields = document.querySelectorAll('#key-input');
     const inputFieldsAppendValue = document.querySelectorAll('#append-input');
-    const dropdown = document.getElementById('dynamic-dropdown');
+    const dropdown = document.querySelectorAll('#dynamic-dropdown');
     inputFields.forEach((inputField, index) => {
         const json = document.getElementById("output");
         let jsonValue = json.value;
-        const append = dropdown.options[index].textContent === "Append";
+        const append = dropdown[index].value === "Append";
         printTheJSONInPrettyFormat(JSON.stringify(appendTextToKey(JSON.parse(jsonValue), inputFields[index].value, inputFieldsAppendValue[index].value, append)))
     });
 }
